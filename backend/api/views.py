@@ -5,18 +5,24 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .services.ai_reviewer import review_code
 
-@api_view(['POST'])
+
+@api_view(["POST"])
 def review(request):
-    try:
-        code = request.data.get("code")
 
-        if not code:
-            return Response({"error": "Code required"}, status=400)
+    code = request.data.get("code")
 
-        result = review_code(code)
+    if not code:
+        return Response(
+            {
+                "error": "Code is required"
+            },
+            status=400
+        )
 
-        return Response({"result": result})
+    result = review_code(code)
 
-    except Exception as e:
-        print("ERROR:", e)
-        return Response({"error": str(e)}, status=500)
+    return Response(
+        {
+            "result": result
+        }
+    )

@@ -1,17 +1,53 @@
-def review_code(code):
-    return f"""
-Issues:
-- No syntax errors detected.
+import os
+from groq import Groq
+from dotenv import load_dotenv
 
-Bugs:
-- No obvious bugs found.
+load_dotenv()
 
-Improvements:
-- Add comments.
-- Follow coding standards.
-- Improve variable names.
+client = Groq(
+    api_key=os.getenv("GROQ_API_KEY")
+)
 
-Fixed Code:
+SYSTEM_PROMPT = """
+You are an experienced Senior Software Engineer.
 
-{code}
+Review the code and return the response in this format.
+
+## Bugs
+- Mention bugs
+
+## Issues
+- Mention issues
+
+## Improvements
+- Mention improvements
+
+## Fixed Code
+Provide corrected code.
 """
+
+def review_code(code):
+
+    try:
+
+        response = client.chat.completions.create(
+            model="llama-3.3-70b-versatile",
+            messages=[
+                {
+                    "role": "system",
+                    "content": SYSTEM_PROMPT
+                },
+                {
+                    "role": "user",
+                    "content": code
+                }
+            ],
+            temperature=0.3
+        )
+
+        return response.choices[0].message.content
+
+    except Exception as e:
+      import traceback
+      traceback.print_exc()
+      return str(e)
