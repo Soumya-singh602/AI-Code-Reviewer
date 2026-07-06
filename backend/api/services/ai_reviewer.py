@@ -1,6 +1,7 @@
 import os
 from groq import Groq
 from dotenv import load_dotenv
+import traceback
 
 load_dotenv()
 
@@ -48,6 +49,5 @@ def review_code(code):
         return response.choices[0].message.content
 
     except Exception as e:
-      import traceback
       traceback.print_exc()
       return str(e)
